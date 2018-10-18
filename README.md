@@ -8,7 +8,7 @@ where d.department_id = e.department_id
 and d.department_name in ('IT'，'Sales')
 GROUP BY department_name;
 ```
-![binaryTree]( )
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/hehe.png)
 查询二：
 ```sql
 SELECT d.department_name，count(e.job_id)as "部门总人数"，
