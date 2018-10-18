@@ -1,5 +1,5 @@
 # 实验一
-查询一：
+-查询一：
 ```sql
 SELECT d.department_name，count(e.job_id)as "部门总人数"，
 avg(e.salary)as "平均工资"
@@ -8,10 +8,10 @@ where d.department_id = e.department_id
 and d.department_name in ('IT'，'Sales')
 GROUP BY department_name;
 ```
-有优化建议：
-可以创建索引来优化此语句的查询速度
+##有优化建议：
+##可以创建索引来优化此语句的查询速度
 ![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/hehe.png)
-查询二：
+-查询二：
 ```sql
 SELECT d.department_name，count(e.job_id)as "部门总人数"，
 avg(e.salary)as "平均工资"
@@ -19,10 +19,11 @@ FROM hr.departments d，hr.employees e
 WHERE d.department_id = e.department_id
 GROUP BY department_name
 HAVING d.department_name in ('IT'，'Sales');
-```
-无优化建议
+``` 
+
+##无优化建议
 ![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/xixi.png)
-自行设计语句:
+-自行设计语句:
 查询了姓名，工作的月数以及天数，运用额ROUND（）函数等，以及嵌套查询
 ```sql
 select m.name as"姓名",
@@ -38,5 +39,5 @@ from hr.employees  e,hr.job_history j
 where e.employee_id=j.employee_id) m
 
 ```
-无优化建议
+##无优化建议
 ![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/lolo.png)
