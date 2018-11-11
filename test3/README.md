@@ -1,0 +1,173 @@
+# 实验三
+- 建立ORDERS表并建立分区：
+```sql
+CREATE TABLE orders 
+(
+ order_id NUMBER(10, 0) NOT NULL 
+ , customer_name VARCHAR2(40 BYTE) NOT NULL 
+ , customer_tel VARCHAR2(40 BYTE) NOT NULL 
+ , order_date DATE NOT NULL 
+ , employee_id NUMBER(6, 0) NOT NULL 
+ , discount NUMBER(8, 2) DEFAULT 0 
+ , trade_receivable NUMBER(8, 2) DEFAULT 0 
+) 
+TABLESPACE USERS 
+PCTFREE 10 INITRANS 1 
+STORAGE (   BUFFER_POOL DEFAULT ) 
+NOCOMPRESS NOPARALLEL 
+PARTITION BY RANGE (order_date) 
+(
+ PARTITION PARTITION_BEFORE_2016 VALUES LESS THAN (
+ TO_DATE(' 2016-01-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 
+ 'NLS_CALENDAR=GREGORIAN')) 
+ NOLOGGING 
+ TABLESPACE USERS 
+ PCTFREE 10 
+ INITRANS 1 
+ STORAGE 
+( 
+ INITIAL 8388608 
+ NEXT 1048576 
+ MINEXTENTS 1 
+ MAXEXTENTS UNLIMITED 
+ BUFFER_POOL DEFAULT 
+) 
+NOCOMPRESS NO INMEMORY  
+, PARTITION PARTITION_BEFORE_2017 VALUES LESS THAN (
+TO_DATE(' 2017-01-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 
+'NLS_CALENDAR=GREGORIAN')) 
+NOLOGGING 
+TABLESPACE USERS02 
+ PCTFREE 10 
+ INITRANS 1 
+ STORAGE 
+( 
+ INITIAL 8388608 
+ NEXT 1048576 
+ MINEXTENTS 1 
+ MAXEXTENTS UNLIMITED 
+ BUFFER_POOL DEFAULT 
+) 
+NOCOMPRESS NO INMEMORY  
+,
+PARTITION PARTITION_BEFORE_2018 VALUES LESS THAN (
+TO_DATE(' 2018-01-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 
+'NLS_CALENDAR=GREGORIAN')) 
+NOLOGGING 
+TABLESPACE USERS03 
+ PCTFREE 10 
+ INITRANS 1 
+ STORAGE 
+( 
+ INITIAL 8388608 
+ NEXT 1048576 
+ MINEXTENTS 1 
+ MAXEXTENTS UNLIMITED 
+ BUFFER_POOL DEFAULT 
+) 
+NOCOMPRESS NO INMEMORY );
+```
+- 建立ORDER_DETAILS表并建立分区：
+```sql
+
+CREATE TABLE order_details 
+(
+id NUMBER(10, 0) NOT NULL 
+, order_id NUMBER(10, 0) NOT NULL
+, product_id VARCHAR2(40 BYTE) NOT NULL 
+, product_num NUMBER(8, 2) NOT NULL 
+, product_price NUMBER(8, 2) NOT NULL 
+, CONSTRAINT order_details_fk1 FOREIGN KEY  (order_id)
+REFERENCES orders  (  order_id   )
+ENABLE 
+) 
+TABLESPACE USERS 
+PCTFREE 10 INITRANS 1 
+STORAGE (   BUFFER_POOL DEFAULT ) 
+NOCOMPRESS NOPARALLEL
+PARTITION BY REFERENCE (order_details_fk1)
+(
+PARTITION PARTITION_BEFORE_2016 
+NOLOGGING 
+TABLESPACE USERS
+PCTFREE 10 
+ INITRANS 1 
+ STORAGE 
+( 
+ INITIAL 8388608 
+ NEXT 1048576 
+ MINEXTENTS 1 
+ MAXEXTENTS UNLIMITED 
+ BUFFER_POOL DEFAULT 
+) 
+NOCOMPRESS NO INMEMORY
+,
+PARTITION PARTITION_BEFORE_2017
+NOLOGGING 
+TABLESPACE USERS02
+PCTFREE 10 
+ INITRANS 1 
+ STORAGE 
+( 
+ INITIAL 8388608 
+ NEXT 1048576 
+ MINEXTENTS 1 
+ MAXEXTENTS UNLIMITED 
+ BUFFER_POOL DEFAULT 
+) 
+NOCOMPRESS NO INMEMORY  
+,PARTITION PARTITION_BEFORE_2018
+NOLOGGING 
+TABLESPACE USERS03
+PCTFREE 10 
+ INITRANS 1 
+ STORAGE 
+( 
+ INITIAL 8388608 
+ NEXT 1048576 
+ MINEXTENTS 1 
+ MAXEXTENTS UNLIMITED 
+ BUFFER_POOL DEFAULT 
+) 
+NOCOMPRESS NO INMEMORY  
+);
+```
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.1.png)
+
+- 建立ORDER_DETAILS表并建立分区：分别授予查询的权限以及分区的权限
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.2.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.3.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.4.png)
+- 分别像两个表插入时间从16年到18年的数据（此处仅展示插入16年的，其余两次插入同理）同理插入ORDER_DETAILS
+```sql
+declare 
+  n INTEGER; 
+begin 
+
+
+  n:=15002;
+
+
+  for i in 1..5000 loop 
+   n:=n+1; 
+insert into ORDERS (ORDER_ID,CUSTOMER_NAME,CUSTOMER_TEL,ORDER_DATE,EMPLOYEE_ID,DISCOUNT,TRADE_RECEIVABLE) 
+values (n,'yang','10086',to_date('2015-07-07 00:00:00', 'SYYYY-MM-DD HH24:MI:SS'),666,777,777);
+    commit; 
+  end loop; 
+
+end;
+```
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.5.png)
+- 分析执行计划：
+- 第一步进行排序计划SORT(AGGREGATE)是指在没有GROUP BY的前提下，使用统计函数对全部数据对象进行运算时所显示出来的执行计划
+- 第二步进行全盘扫描通过主键        
+```sql
+EXPLAIN plan for
+select COUNT(*) FROM ORDERS;
+SELECT * 
+FROM ORDERS A,ORDER_DETAILS B
+WHERE A.ORDER_ID=B.ORDER_ID;
+select * from table(dbms_xplan.display());
+```
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.6.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.7.png)
