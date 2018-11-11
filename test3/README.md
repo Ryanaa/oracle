@@ -132,12 +132,12 @@ PCTFREE 10
 NOCOMPRESS NO INMEMORY  
 );
 ```
-![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.1.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test3/image/3.1.png)
 
 - 建立ORDER_DETAILS表并建立分区：分别授予查询的权限以及分区的权限
-![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.2.png)
-![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.3.png)
-![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.4.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test3/image/3.2.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test3/image/3.3.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test3/image/3.4.png)
 - 分别像两个表插入时间从16年到18年的数据（此处仅展示插入16年的，其余两次插入同理）同理插入ORDER_DETAILS
 ```sql
 declare 
@@ -157,7 +157,7 @@ values (n,'yang','10086',to_date('2015-07-07 00:00:00', 'SYYYY-MM-DD HH24:MI:SS'
 
 end;
 ```
-![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.5.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test3/image/3.5.png)
 - 分析执行计划：
 - 第一步进行排序计划SORT(AGGREGATE)是指在没有GROUP BY的前提下，使用统计函数对全部数据对象进行运算时所显示出来的执行计划
 - 第二步进行全盘扫描通过主键        
@@ -169,5 +169,5 @@ FROM ORDERS A,ORDER_DETAILS B
 WHERE A.ORDER_ID=B.ORDER_ID;
 select * from table(dbms_xplan.display());
 ```
-![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.6.png)
-![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/web/images/3.7.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test3/image/3.6.png)
+![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test3/image/3.7.png)
