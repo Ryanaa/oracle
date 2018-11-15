@@ -27,7 +27,7 @@ where a.order_id=b.order_id
 
 ```
 ![binaryTree]( https://github.com/Ryanaa/oracle/blob/master/test4/image/4.4.png)
-- 5.查询订单详表，要求显示订单的客户名称和客户电话，产品类型用汉字描述。
+- 5.查询出所有空订单，即没有订单详单的订单。
 
 ```sql
 select a.DEPARTMENT_NAME as "部门",b.name as "负责人"
